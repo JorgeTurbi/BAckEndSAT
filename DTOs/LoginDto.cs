@@ -1,4 +1,5 @@
 namespace DTOs;
+
 public class LoginDto
 {
     public required string Usuario { get; set; }

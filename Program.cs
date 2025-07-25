@@ -1,57 +1,79 @@
 using System.Text;
+using BackEndSAT.Middlewares;
 using Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Repository.SessionServices;
 using Respository;
 using Services;
-
+using Services.SessionServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 // Leer la configuración del appsettings
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
 
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder
+    .Services.AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidateAudience = true,
-        ValidAudience = jwtSettings["Audience"],
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
-    };
-});
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidateAudience = true,
+            ValidAudience = jwtSettings["Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+        };
+    });
+
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ISessionValidationService, SessionValidationService>();
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SAT API", Version = "v1" });
 
+    // Definición del esquema de seguridad (el candado)
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Introduce el JWT con el esquema **Bearer**. Ej: `Bearer eyJhbGciOi...`",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    // Requisito global: todos los endpoints usarán este esquema (muestra el candado)
+    c.AddSecurityRequirement(
+        new OpenApiSecurityRequirement { { securityScheme, Array.Empty<string>() } }
+    );
+});
 
 builder.Services.AddAutoMapper(typeof(Program)); // O typeof(MappingProfile)
-
-
-
-
-
-
 
 var app = builder.Build();
 
@@ -59,10 +81,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SAT API v1");
+    });
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseMiddleware<SessionValidationMiddleware>();
 
 app.UseAuthorization();
 

@@ -1,4 +1,5 @@
 namespace DTOs;
+
 public class GenericResponseDto<T>
 {
     public bool Success { get; set; }

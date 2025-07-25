@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BackEndSAT.Migrations
 {
     /// <inheritdoc />
-    public partial class INITIAL : Migration
+    public partial class AddInitialEntity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -81,6 +81,42 @@ namespace BackEndSAT.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Sessions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Token = table.Column<string>(type: "varchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false),
+                    RevokedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserAgent = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Departamentos",
+                columns: new[] { "Id", "Direccion", "Director" },
+                values: new object[,]
+                {
+                    { 1, "Dirección de Tecnología", "Capitan de Navío Jhonathan de la Cruz" },
+                    { 2, "Recursos Humanos", "Mayor Piloto Jesica Heredia" },
+                    { 3, "Operaciones", "Coronel de Infantería Juan Pérez" }
+                });
+
             migrationBuilder.InsertData(
                 table: "Instituciones",
                 columns: new[] { "Id", "CodigoNombre", "Direccion", "Email", "Nombre", "Telefono", "UrlLogo" },
@@ -101,6 +137,11 @@ namespace BackEndSAT.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sessions_UserId_IsRevoked",
+                table: "Sessions",
+                columns: new[] { "UserId", "IsRevoked" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_DepartamentoId",
                 table: "Users",
                 column: "DepartamentoId");
@@ -114,6 +155,9 @@ namespace BackEndSAT.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Sessions");
+
             migrationBuilder.DropTable(
                 name: "Users");
 

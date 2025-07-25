@@ -1,10 +1,11 @@
 using DTOs;
 using Microsoft.AspNetCore.Identity;
+
 namespace Helper;
 
 public static class PasswordHelper
 {
-  public static string HashPassword(string plainPassword)
+    public static string HashPassword(string plainPassword)
     {
         var hasher = new PasswordHasher<UserDto>();
         return hasher.HashPassword(null!, plainPassword); // null porque no necesitas una instancia real para el hash

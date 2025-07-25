@@ -8,10 +8,11 @@ public class User
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Key]
     public int Id { get; set; }
-    
+
     [ForeignKey("Institucion")]
     public int InstitutionId { get; set; }
-     [ForeignKey("Departamento")]
+
+    [ForeignKey("Departamento")]
     public int DepartamentoId { get; set; }
     public required string Nombres { get; set; }
     public required string Apellidos { get; set; }
@@ -25,7 +26,8 @@ public class User
     public required DateTime CreatedAt { get; set; }
 
     public virtual Institucion? Institucion { get; set; }
-   public virtual Departamento? Departamento { get; set; }
+    public virtual Departamento? Departamento { get; set; }
 
-
+    // Nueva relación con Sessions
+    public virtual ICollection<Session> Sessions { get; set; } = new List<Session>();
 }

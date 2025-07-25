@@ -13,4 +13,3 @@ public class Departamento
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
-

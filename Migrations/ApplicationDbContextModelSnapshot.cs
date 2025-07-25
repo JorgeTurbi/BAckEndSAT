@@ -217,6 +217,46 @@ namespace BackEndSAT.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Entities.Session", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "IsRevoked");
+
+                    b.ToTable("Sessions");
+                });
+
             modelBuilder.Entity("Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -278,6 +318,17 @@ namespace BackEndSAT.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Entities.Session", b =>
+                {
+                    b.HasOne("Entities.User", "User")
+                        .WithMany("Sessions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Entities.User", b =>
                 {
                     b.HasOne("Entities.Departamento", "Departamento")
@@ -305,6 +356,11 @@ namespace BackEndSAT.Migrations
             modelBuilder.Entity("Entities.Institucion", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Entities.User", b =>
+                {
+                    b.Navigation("Sessions");
                 });
 #pragma warning restore 612, 618
         }
