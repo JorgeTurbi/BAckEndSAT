@@ -1,12 +1,14 @@
 using System.Text;
 using BackEndSAT.Middlewares;
 using Context;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository.SessionServices;
 using Respository;
+using SecctionProfile;
 using Services;
 using Services.SessionServices;
 
@@ -73,7 +75,7 @@ builder.Services.AddSwaggerGen(c =>
     );
 });
 
-builder.Services.AddAutoMapper(typeof(Program)); // O typeof(MappingProfile)
+builder.Services.AddAutoMapper(typeof(MappingProfile)); // O typeof(MappingProfile)
 
 var app = builder.Build();
 

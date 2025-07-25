@@ -2,7 +2,7 @@ using AutoMapper;
 using DTOs;
 using Entities;
 
-namespace MappingProfile;
+namespace SecctionProfile;
 
 public class MappingProfile : Profile
 {

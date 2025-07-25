@@ -13,4 +13,5 @@ public interface IAuthService
     Task<GenericResponseDto<UserProfileDto>> GetUserProfileAsync(int userId);
     Task<GenericResponseDto<bool>> LogoutAsync(string token);
     Task<GenericResponseDto<bool>> LogoutAllSessionsAsync(int userId);
+    Task<GenericResponseDto<bool>> ActivarUsuario(int userId);
 }

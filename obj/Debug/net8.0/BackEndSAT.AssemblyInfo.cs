@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BackEndSAT")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2029fea97376d060158915cace27c23bac224db5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2cf3f972f93e9d428f89c822a12b94880c381a63")]
 [assembly: System.Reflection.AssemblyProductAttribute("BackEndSAT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BackEndSAT")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

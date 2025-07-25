@@ -311,4 +311,47 @@ public class AuthService : IAuthService
 
         return (tokenString, expiresAt);
     }
+
+    public async Task<GenericResponseDto<bool>> ActivarUsuario(int userId)
+    {
+        if (userId <= 0)
+        {
+            return new GenericResponseDto<bool>
+            {
+                Success = false,
+                Message = "ID de usuario inválido",
+                Data = false,
+            };
+        }
+        var user = await _Context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+        {
+            return new GenericResponseDto<bool>
+            {
+                Success = false,
+                Message = "Usuario no encontrado",
+                Data = false,
+            };
+        }
+        if (user.IsActive)
+        {
+            return new GenericResponseDto<bool>
+            {
+                Success = false,
+                Message = "El usuario ya está activo",
+                Data = false,
+            };
+        }
+
+        user.IsActive = true;
+        var respuesta = await _Context.SaveChangesAsync() > 0 ? true : false;
+        return new GenericResponseDto<bool>
+        {
+            Success = respuesta,
+            Message = respuesta ? "Usuario activado exitosamente" : "Error al activar el usuario",
+            Data = respuesta,
+        };
+            
+        
+    }
 }

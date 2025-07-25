@@ -1,3 +1,4 @@
+
 using System.Security.Claims;
 using DTOs;
 using Helper;
@@ -88,8 +89,21 @@ public class AuthController : ControllerBase
     /// Endpoint para hacer logout (cerrar sesión actual)
     /// </summary>
     /// <returns>Confirmación del logout</returns>
-    [HttpPost("logout")]
-    [Authorize]
+
+
+    [HttpPost("ActivarUsuario")]   
+    public async Task<IActionResult> ActivarUsuario([FromQuery]int userId)
+    {
+        var result = await _authService.ActivarUsuario(userId);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+
+        
+    }
+    [HttpGet("Logout")]
     public async Task<IActionResult> Logout()
     {
         var auth = Request.Headers["Authorization"].FirstOrDefault();
