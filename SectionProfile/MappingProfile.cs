@@ -38,5 +38,17 @@ public class MappingProfile : Profile
                 dest => dest.DepartamentoDirector,
                 opt => opt.MapFrom(src => src.Departamento!.Director)
             );
+
+        CreateMap<Provincia, ProvinciaDto>().ReverseMap();
+
+        CreateMap<CategoriaVacante, CategoriaVacanteDto>().ReverseMap();
+
+        CreateMap<Vacante, VacanteDto>()
+            .ForMember(d => d.InstitucionNombre, o => o.MapFrom(s => s.Institucion!.Nombre))
+            .ForMember(d => d.ProvinciaNombre, o => o.MapFrom(s => s.Provincia!.Nombre))
+            .ForMember(d => d.CategoriaNombre, o => o.MapFrom(s => s.Categoria!.Nombre));
+
+        CreateMap<VacanteCreateDto, Vacante>();
+        CreateMap<VacanteUpdateDto, Vacante>();
     }
 }

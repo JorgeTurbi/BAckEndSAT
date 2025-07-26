@@ -1,13 +1,12 @@
 using System.Text;
 using BackEndSAT.Middlewares;
 using Context;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Repository;
 using Repository.SessionServices;
-using Respository;
 using SecctionProfile;
 using Services;
 using Services.SessionServices;
@@ -46,6 +45,18 @@ builder
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISessionValidationService, SessionValidationService>();
+
+// Provincia
+builder.Services.AddScoped<IProvinciaService, ProvinciaService>();
+builder.Services.AddScoped<IProvinciaRepository, ProvinciaRepository>();
+
+// CategoriaVacante
+builder.Services.AddScoped<ICategoriaVacanteService, CategoriaVacanteService>();
+builder.Services.AddScoped<ICategoriaVacanteRepository, CategoriaVacanteRepository>();
+
+// Vacante
+builder.Services.AddScoped<IVacanteService, VacanteService>();
+builder.Services.AddScoped<IVacanteRepository, VacanteRepository>();
 
 builder.Services.AddControllers();
 
