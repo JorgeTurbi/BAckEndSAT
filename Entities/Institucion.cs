@@ -15,4 +15,5 @@ public class Institucion
     public string? Email { get; set; }
     public string? Direccion { get; set; }
     public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public virtual ICollection<Vacante> Vacantes { get; set; } = new List<Vacante>();
 }

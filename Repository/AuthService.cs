@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Services;
 
-namespace Respository;
+namespace Repository;
 
 public class AuthService : IAuthService
 {
@@ -351,7 +351,5 @@ public class AuthService : IAuthService
             Message = respuesta ? "Usuario activado exitosamente" : "Error al activar el usuario",
             Data = respuesta,
         };
-            
-        
     }
 }

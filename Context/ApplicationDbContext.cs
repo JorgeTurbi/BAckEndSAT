@@ -9,6 +9,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<Institucion> Instituciones { get; set; }
     public DbSet<Departamento> Departamentos { get; set; }
     public DbSet<Session> Sessions { get; set; }
+    public DbSet<Vacante> Vacantes { get; set; }
+    public DbSet<CategoriaVacante> CategoriasVacante { get; set; }
+    public DbSet<Provincia> Provincias { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
@@ -22,6 +25,12 @@ public class ApplicationDbContext : DbContext
             .HasOne(u => u.Institucion)
             .WithMany(i => i.Users)
             .HasForeignKey(u => u.InstitutionId);
+
+        modelBuilder
+            .Entity<Institucion>()
+            .HasMany(i => i.Vacantes)
+            .WithOne(v => v.Institucion!)
+            .HasForeignKey(v => v.InstitucionId);
 
         modelBuilder
             .Entity<User>()
@@ -42,6 +51,33 @@ public class ApplicationDbContext : DbContext
             e.Property(s => s.Token).HasColumnType("varchar(max)").IsRequired();
 
             e.HasIndex(s => new { s.UserId, s.IsRevoked });
+        });
+
+        modelBuilder.Entity<Vacante>(e =>
+        {
+            e.Property(v => v.DescripcionPuesto).HasColumnType("nvarchar(max)");
+            e.Property(v => v.ResponsabilidadesEspecificas).HasColumnType("nvarchar(max)");
+            e.Property(v => v.RequisitosGenerales).HasColumnType("nvarchar(max)");
+            e.Property(v => v.EducacionRequerida).HasColumnType("nvarchar(max)");
+            e.Property(v => v.ExperienciaRequerida).HasColumnType("nvarchar(max)");
+            e.Property(v => v.HabilidadesCompetencias).HasColumnType("nvarchar(max)");
+            e.Property(v => v.BeneficiosCompensaciones).HasColumnType("nvarchar(max)");
+
+            e.HasOne(v => v.Institucion)
+                .WithMany(i => i.Vacantes) // Agrega la colección en Institucion (ver abajo)
+                .HasForeignKey(v => v.InstitucionId);
+
+            e.HasOne(v => v.Provincia).WithMany(p => p.Vacantes).HasForeignKey(v => v.ProvinciaId);
+
+            e.HasOne(v => v.Categoria).WithMany(c => c.Vacantes).HasForeignKey(v => v.CategoriaId);
+
+            e.HasIndex(v => new
+            {
+                v.InstitucionId,
+                v.CategoriaId,
+                v.ProvinciaId,
+            });
+            e.HasIndex(v => v.IsActive);
         });
 
         // Datos por defecto para Departamentos
@@ -192,6 +228,55 @@ public class ApplicationDbContext : DbContext
                     Email = "info@C5iffaa.gob.do",
                     Direccion = "Av. Luperón, Santo Domingo",
                 }
+            );
+
+        modelBuilder
+            .Entity<Provincia>()
+            .HasData(
+                new Provincia { Id = 1, Nombre = "Azua" },
+                new Provincia { Id = 2, Nombre = "Baoruco" },
+                new Provincia { Id = 3, Nombre = "Barahona" },
+                new Provincia { Id = 4, Nombre = "Dajabón" },
+                new Provincia { Id = 5, Nombre = "Duarte" },
+                new Provincia { Id = 6, Nombre = "Elías Piña" },
+                new Provincia { Id = 7, Nombre = "El Seibo" },
+                new Provincia { Id = 8, Nombre = "Espaillat" },
+                new Provincia { Id = 9, Nombre = "Hato Mayor" },
+                new Provincia { Id = 10, Nombre = "Hermanas Mirabal" },
+                new Provincia { Id = 11, Nombre = "Independencia" },
+                new Provincia { Id = 12, Nombre = "La Altagracia" },
+                new Provincia { Id = 13, Nombre = "La Romana" },
+                new Provincia { Id = 14, Nombre = "La Vega" },
+                new Provincia { Id = 15, Nombre = "María Trinidad Sánchez" },
+                new Provincia { Id = 16, Nombre = "Monseñor Nouel" },
+                new Provincia { Id = 17, Nombre = "Monte Cristi" },
+                new Provincia { Id = 18, Nombre = "Monte Plata" },
+                new Provincia { Id = 19, Nombre = "Pedernales" },
+                new Provincia { Id = 20, Nombre = "Peravia" },
+                new Provincia { Id = 21, Nombre = "Puerto Plata" },
+                new Provincia { Id = 22, Nombre = "Samaná" },
+                new Provincia { Id = 23, Nombre = "Sánchez Ramírez" },
+                new Provincia { Id = 24, Nombre = "San Cristóbal" },
+                new Provincia { Id = 25, Nombre = "San José de Ocoa" },
+                new Provincia { Id = 26, Nombre = "San Juan" },
+                new Provincia { Id = 27, Nombre = "San Pedro de Macorís" },
+                new Provincia { Id = 28, Nombre = "Santiago" },
+                new Provincia { Id = 29, Nombre = "Santiago Rodríguez" },
+                new Provincia { Id = 30, Nombre = "Santo Domingo" },
+                new Provincia { Id = 31, Nombre = "Valverde" },
+                new Provincia { Id = 32, Nombre = "Distrito Nacional" }
+            );
+
+        modelBuilder
+            .Entity<CategoriaVacante>()
+            .HasData(
+                new CategoriaVacante { Id = 1, Nombre = "Operaciones Especiales" },
+                new CategoriaVacante { Id = 2, Nombre = "Inteligencia y Contrainteligencia" },
+                new CategoriaVacante { Id = 3, Nombre = "Seguridad Fronteriza" },
+                new CategoriaVacante { Id = 4, Nombre = "Ciberseguridad" },
+                new CategoriaVacante { Id = 5, Nombre = "Administración" },
+                new CategoriaVacante { Id = 6, Nombre = "Logística" },
+                new CategoriaVacante { Id = 7, Nombre = "Comunicaciones" }
             );
     }
 }
