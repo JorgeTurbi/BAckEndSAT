@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
+using Repository.InstitucionesRepository;
 using Repository.SessionServices;
 using SecctionProfile;
 using Services;
+using Services.Instituciones;
 using Services.SessionServices;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -68,6 +70,8 @@ builder.Services.AddScoped<ICategoriaVacanteRepository, CategoriaVacanteReposito
 // Vacante
 builder.Services.AddScoped<IVacanteService, VacanteService>();
 builder.Services.AddScoped<IVacanteRepository, VacanteRepository>();
+// Institucion
+builder.Services.AddScoped<IInstitucion, InstitucionRepository>();
 
 builder.Services.AddControllers();
 

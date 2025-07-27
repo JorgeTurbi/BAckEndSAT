@@ -48,8 +48,8 @@ public class AuthController : ControllerBase
 
         var result = await _authService.LoginAsync(dto, ip, userAgent);
 
-        if (!result.Success)
-            return Unauthorized(result); // 401 si falla
+        // if (!result.Success)
+        //     return Unauthorized(result); // 401 si falla
 
         return Ok(result); // 200 con token si éxito
     }
