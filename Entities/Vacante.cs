@@ -9,6 +9,7 @@ public class Vacante
     [Key]
     public int Id { get; set; }
 
+    public int UserId { get; set; }
     // Relaciones
     [ForeignKey("Institucion")]
     public int InstitucionId { get; set; }
@@ -62,4 +63,5 @@ public class Vacante
     public virtual Institucion? Institucion { get; set; }
     public virtual Provincia? Provincia { get; set; }
     public virtual CategoriaVacante? Categoria { get; set; }
+    public virtual  User? User { get; set; }
 }

@@ -76,6 +76,7 @@ public class AuthService : IAuthService
 
         // Mapear usuario a UserProfileDto
         var userProfile = _Mapper.Map<UserProfileDto>(user);
+        userProfile.UserType = user.UserType == "P" ? "Personal" : "Vacante";
 
         var loginResponse = new LoginResponseDto
         {

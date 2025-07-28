@@ -30,4 +30,5 @@ public class User
 
     // Nueva relación con Sessions
     public virtual ICollection<Session> Sessions { get; set; } = new List<Session>();
+    public virtual ICollection<Vacante>  Vacantes { get; set; } = new List<Vacante>();
 }

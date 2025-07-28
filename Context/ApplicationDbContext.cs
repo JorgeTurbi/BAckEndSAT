@@ -24,26 +24,38 @@ public class ApplicationDbContext : DbContext
             .Entity<User>()
             .HasOne(u => u.Institucion)
             .WithMany(i => i.Users)
-            .HasForeignKey(u => u.InstitutionId);
+            .HasForeignKey(u => u.InstitutionId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // relacion vacante usuario
+        modelBuilder
+            .Entity<Vacante>()
+            .HasOne(u => u.User)
+            .WithMany(i => i.Vacantes)
+            .HasForeignKey(u => u.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder
             .Entity<Institucion>()
             .HasMany(i => i.Vacantes)
             .WithOne(v => v.Institucion!)
-            .HasForeignKey(v => v.InstitucionId);
+            .HasForeignKey(v => v.InstitucionId)
+             .OnDelete(DeleteBehavior.NoAction);;
 
         modelBuilder
             .Entity<User>()
             .HasOne(u => u.Departamento)
             .WithMany(d => d.Users)
-            .HasForeignKey(u => u.DepartamentoId);
+            .HasForeignKey(u => u.DepartamentoId)
+             .OnDelete(DeleteBehavior.NoAction);;
 
         // Relación User -> Sessions
         modelBuilder
             .Entity<Session>()
             .HasOne(s => s.User)
             .WithMany(u => u.Sessions)
-            .HasForeignKey(s => s.UserId);
+            .HasForeignKey(s => s.UserId)
+             .OnDelete(DeleteBehavior.NoAction);;
 
         // Índices para mejorar rendimiento
         modelBuilder.Entity<Session>(e =>
@@ -51,6 +63,7 @@ public class ApplicationDbContext : DbContext
             e.Property(s => s.Token).HasColumnType("varchar(max)").IsRequired();
 
             e.HasIndex(s => new { s.UserId, s.IsRevoked });
+         
         });
 
         modelBuilder.Entity<Vacante>(e =>
