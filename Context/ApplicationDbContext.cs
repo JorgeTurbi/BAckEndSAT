@@ -22,30 +22,57 @@ public class ApplicationDbContext : DbContext
     public DbSet<Aplicante> Aplicantes { get; set; } = null!;
     public DbSet<Experience> Experiences { get; set; } = null!;
     public DbSet<Education> Educations { get; set; } = null!;
+    public DbSet<Estado> Estados { get; set; } = null!;
+     public DbSet<AplicacionVacante> AplicacionVacantes { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+// Relación Aplicante 1:N AplicacionVacante
+
+modelBuilder.Entity<AplicacionVacante>()
+    .HasOne(av => av.Aplicante)
+    .WithMany(a => a.Aplicaciones)
+    .HasForeignKey(av => av.AplicanteId)
+    .OnDelete(DeleteBehavior.NoAction);
+
+// Relación Vacante 1:N AplicacionVacante
+modelBuilder.Entity<AplicacionVacante>()
+    .HasOne(av => av.Vacante)
+    .WithMany(v => v.Aplicaciones)
+    .HasForeignKey(av => av.VacanteId)
+    .OnDelete(DeleteBehavior.NoAction);
+
+// Relación Estado 1:N AplicacionVacante
+modelBuilder.Entity<AplicacionVacante>()
+    .HasOne(av => av.Estado)
+    .WithMany()
+    .HasForeignKey(av => av.EstadoId)
+    .OnDelete(DeleteBehavior.NoAction);
+
+
+    
+
         // Configuración de UserProfile
-       modelBuilder.Entity<Aplicante>(entity =>
-{
-    entity.ToTable("Aplicantes");
-    entity.HasKey(u => u.Id);
+        modelBuilder.Entity<Aplicante>(entity =>
+ {
+     entity.ToTable("Aplicantes");
+     entity.HasKey(u => u.Id);
 
-    // Relación 1:N con Experience
-    entity.HasMany(u => u.Experience)
-          .WithOne(e => e.Aplicante)               // propiedad de navegación en Experience
-          .HasForeignKey(e => e.AplicanteId)       // FK
-          .OnDelete(DeleteBehavior.NoAction);      // evita cascada
+     // Relación 1:N con Experience
+     entity.HasMany(u => u.Experience)
+           .WithOne(e => e.Aplicante)               // propiedad de navegación en Experience
+           .HasForeignKey(e => e.AplicanteId)       // FK
+           .OnDelete(DeleteBehavior.NoAction);      // evita cascada
 
-    // Relación 1:N con Education
-    entity.HasMany(u => u.Education)
-          .WithOne(ed => ed.Aplicante)             // propiedad de navegación en Education
-          .HasForeignKey(ed => ed.AplicanteId)     // FK correcta
-          .OnDelete(DeleteBehavior.NoAction);
-});
+     // Relación 1:N con Education
+     entity.HasMany(u => u.Education)
+           .WithOne(ed => ed.Aplicante)             // propiedad de navegación en Education
+           .HasForeignKey(ed => ed.AplicanteId)     // FK correcta
+           .OnDelete(DeleteBehavior.NoAction);
+ });
 
         // Configuración de Experience
         modelBuilder.Entity<Experience>(entity =>
@@ -95,7 +122,12 @@ public class ApplicationDbContext : DbContext
             .WithMany(d => d.Users)
             .HasForeignKey(u => u.DepartamentoId)
              .OnDelete(DeleteBehavior.NoAction); ;
-
+        modelBuilder.Entity<Estado>().HasData(
+             new Estado { Id = 1, Nombre = "Pendiente", Descripcion = "Aplicación recibida, en espera de revisión" },
+             new Estado { Id = 2, Nombre = "En revisión", Descripcion = "Aplicación está siendo evaluada por el reclutador" },
+             new Estado { Id = 3, Nombre = "Aprobado", Descripcion = "Aplicante seleccionado para la vacante" },
+             new Estado { Id = 4, Nombre = "Rechazado", Descripcion = "Aplicante no seleccionado para esta vacante" }
+         );
         // Relación User -> Sessions
         modelBuilder
             .Entity<Session>()

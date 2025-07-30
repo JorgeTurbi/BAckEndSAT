@@ -6,12 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
+using Repository.AplicacionesVacantes;
 using Repository.InstitucionesRepository;
 using Repository.InstitucionesRepository.PerfilesRepository;
 using Repository.PerlesRepository;
 using Repository.SessionServices;
 using SecctionProfile;
 using Services;
+using Services.AplicacionesVacante;
 using Services.Instituciones;
 using Services.Perfil;
 using Services.SessionServices;
@@ -77,6 +79,7 @@ builder.Services.AddScoped<IVacanteRepository, VacanteRepository>();
 builder.Services.AddScoped<IInstitucion, InstitucionRepository>();
 builder.Services.AddScoped<IInterfacePerfil, Generico>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+builder.Services.AddScoped<IAplicacionVacanteService, AplicacionVacanteRepository>();
 
 builder.Services.AddControllers();
 

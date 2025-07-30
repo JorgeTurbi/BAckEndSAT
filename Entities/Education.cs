@@ -14,7 +14,7 @@ public class Education
     public string? Degree { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public string? Description { get; set; }
+      public string? CertificatePdf { get; set; }
 
     // FK con UserProfile
     public int AplicanteId { get; set; }

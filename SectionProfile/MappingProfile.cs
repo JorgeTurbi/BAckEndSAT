@@ -70,6 +70,8 @@ public class MappingProfile : Profile
 
         CreateMap<Experience, ExperienceDto>().ReverseMap();
         CreateMap<Education, EducationDto>().ReverseMap();
+        CreateMap<AplicacionVacante, AplicacionVacanteDto>().ReverseMap();
+ 
 
     }
 }

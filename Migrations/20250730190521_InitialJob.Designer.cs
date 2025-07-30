@@ -4,6 +4,7 @@ using Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEndSAT.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250730190521_InitialJob")]
+    partial class InitialJob
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,43 +24,6 @@ namespace BackEndSAT.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Entities.AplicacionVacante", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AplicanteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EstadoId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaAplicacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("MatchPorcentaje")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Observaciones")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VacanteId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AplicanteId");
-
-                    b.HasIndex("EstadoId");
-
-                    b.HasIndex("VacanteId");
-
-                    b.ToTable("AplicacionVacantes");
-                });
 
             modelBuilder.Entity("Entities.Aplicante", b =>
                 {
@@ -275,68 +241,6 @@ namespace BackEndSAT.Migrations
                     b.HasIndex("AplicanteId");
 
                     b.ToTable("Educations", (string)null);
-                });
-
-            modelBuilder.Entity("Entities.Estado", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Descripcion")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Estados");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 7, 30, 21, 14, 55, 166, DateTimeKind.Utc).AddTicks(784),
-                            Descripcion = "Aplicación recibida, en espera de revisión",
-                            IsActive = true,
-                            Nombre = "Pendiente"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 7, 30, 21, 14, 55, 166, DateTimeKind.Utc).AddTicks(791),
-                            Descripcion = "Aplicación está siendo evaluada por el reclutador",
-                            IsActive = true,
-                            Nombre = "En revisión"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 7, 30, 21, 14, 55, 166, DateTimeKind.Utc).AddTicks(793),
-                            Descripcion = "Aplicante seleccionado para la vacante",
-                            IsActive = true,
-                            Nombre = "Aprobado"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2025, 7, 30, 21, 14, 55, 166, DateTimeKind.Utc).AddTicks(795),
-                            Descripcion = "Aplicante no seleccionado para esta vacante",
-                            IsActive = true,
-                            Nombre = "Rechazado"
-                        });
                 });
 
             modelBuilder.Entity("Entities.Experience", b =>
@@ -1238,33 +1142,6 @@ namespace BackEndSAT.Migrations
                     b.ToTable("Vacantes");
                 });
 
-            modelBuilder.Entity("Entities.AplicacionVacante", b =>
-                {
-                    b.HasOne("Entities.Aplicante", "Aplicante")
-                        .WithMany("Aplicaciones")
-                        .HasForeignKey("AplicanteId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Vacante", "Vacante")
-                        .WithMany("Aplicaciones")
-                        .HasForeignKey("VacanteId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Aplicante");
-
-                    b.Navigation("Estado");
-
-                    b.Navigation("Vacante");
-                });
-
             modelBuilder.Entity("Entities.Education", b =>
                 {
                     b.HasOne("Entities.Aplicante", "Aplicante")
@@ -1365,8 +1242,6 @@ namespace BackEndSAT.Migrations
 
             modelBuilder.Entity("Entities.Aplicante", b =>
                 {
-                    b.Navigation("Aplicaciones");
-
                     b.Navigation("Education");
 
                     b.Navigation("Experience");
@@ -1404,11 +1279,6 @@ namespace BackEndSAT.Migrations
                     b.Navigation("Sessions");
 
                     b.Navigation("Vacantes");
-                });
-
-            modelBuilder.Entity("Entities.Vacante", b =>
-                {
-                    b.Navigation("Aplicaciones");
                 });
 #pragma warning restore 612, 618
         }

@@ -54,7 +54,7 @@ public class Vacante
     [Required, MaxLength(300)]
     public required string Telefono { get; set; }
     public required string Email { get; set; }
-       public string? Direccion { get; set; }
+    public string? Direccion { get; set; }
 
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -65,4 +65,8 @@ public class Vacante
     public virtual Provincia? Provincia { get; set; }
     public virtual CategoriaVacante? Categoria { get; set; }
     public virtual User? User { get; set; }
+  // En Vacante
+public virtual ICollection<AplicacionVacante> Aplicaciones { get; set; } = new List<AplicacionVacante>();
+
+
 }

@@ -22,21 +22,21 @@ namespace BackEndSAT.Controllers
     /// Crear un perfil de usuario (Aplicante)
     /// </summary>
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] ApplicanteDto dto)
+    public async Task<IActionResult> Create([FromBody] ApplicanteDto crearPerfilMilitar)
     {
         if (!ModelState.IsValid)
             return BadRequest(new { Success = false, Message = "Datos inválidos" });
 
-            return Ok(await _Service.CreateAsync(dto));
+            return Ok(await _Service.CreateAsync(crearPerfilMilitar));
     }
 
     /// <summary>
     /// Obtener perfil por ID
     /// </summary>
     [HttpGet("GetById")]
-    public async Task<IActionResult> GetById([FromQuery] int id)
+    public async Task<IActionResult> GetById([FromQuery] int UserId)
     {
-        var result = await _Service.GetByIdAsync(id);
+        var result = await _Service.GetByIdAsync(UserId);
         return result.Success ? Ok(result) : NotFound(result);
     }
     }
