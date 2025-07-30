@@ -1,14 +1,15 @@
+using DTOs;
 using Entities;
 
 namespace Repository;
 
 public interface IVacanteRepository
 {
-    Task<List<Vacante>> GetAllWithDetailsAsync();
+    Task<GenericResponseDto<List<VacanteDto>>> GetAllWithDetailsAsync();
     Task<List<Vacante>> GetActiveWithDetailsAsync();
     Task<Vacante?> GetByIdAsync(int id);
     Task<Vacante?> GetByIdWithDetailsAsync(int id);
-    Task<Vacante> CreateAsync(Vacante vacante);
+    Task<GenericResponseDto<bool>> CreateAsync(VacanteCreateDto vacante);
     Task<Vacante> UpdateAsync(Vacante vacante);
     Task<bool> DeleteAsync(int id);
     Task<List<Vacante>> GetByInstitucionWithDetailsAsync(int institucionId);

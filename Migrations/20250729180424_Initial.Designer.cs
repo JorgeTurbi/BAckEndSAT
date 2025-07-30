@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEndSAT.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250728002933_UserId added")]
-    partial class UserIdadded
+    [Migration("20250729180424_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -275,7 +275,7 @@ namespace BackEndSAT.Migrations
                             Email = "info@C5iffaa.gob.do",
                             Nombre = "C5i de las Fuerzas Armadas",
                             Telefono = "809-999-1011",
-                            UrlLogo = "/Logos/mide.png"
+                            UrlLogo = "images/logo/c5iLogo.png"
                         });
                 });
 
@@ -581,11 +581,18 @@ namespace BackEndSAT.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Direccion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DuracionContrato")
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
 
                     b.Property<string>("EducacionRequerida")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExperienciaRequerida")
@@ -600,11 +607,6 @@ namespace BackEndSAT.Migrations
                     b.Property<string>("HorarioTrabajo")
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
-
-                    b.Property<string>("InformacionContacto")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("InstitucionId")
                         .HasColumnType("int");
@@ -625,6 +627,11 @@ namespace BackEndSAT.Migrations
                     b.Property<string>("SalarioCompensacion")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("TipoContrato")
                         .HasColumnType("int");

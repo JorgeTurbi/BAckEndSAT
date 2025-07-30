@@ -25,18 +25,16 @@ public class VacanteCreateDto
     public DateTime? FechaLimiteAplicacion { get; set; }
     public string? HorarioTrabajo { get; set; }
     public string? DuracionContrato { get; set; }
-
     public required string DescripcionPuesto { get; set; } = null!;
-
-
     public required string RequisitosGenerales { get; set; } = null!;
     public string? ResponsabilidadesEspecificas { get; set; }
     public string? EducacionRequerida { get; set; }
     public string? ExperienciaRequerida { get; set; }
     public string? HabilidadesCompetencias { get; set; }
     public string? BeneficiosCompensaciones { get; set; }
-
-    public required string InformacionContacto { get; set; } = null!;
+    public required string Telefono { get; set; } = null!;
+    public required string Email { get; set; } = null!;
+    public string? Direccion { get; set; }
     public required bool IsActive { get; set; } = true;
 }
 
@@ -61,13 +59,15 @@ public class VacanteDto
     public string? HorarioTrabajo { get; set; }
     public string? DuracionContrato { get; set; }
     public string? DescripcionPuesto { get; set; }
-    public string? ResponsabilidadesEspecificas { get; set; }
-    public string? RequisitosGenerales { get; set; }
+    public string[]? ResponsabilidadesEspecificas { get; set; } = Array.Empty<string>();
+    public string[]? RequisitosGenerales { get; set; } = Array.Empty<string>();
     public string? EducacionRequerida { get; set; }
     public string? ExperienciaRequerida { get; set; }
-    public string? HabilidadesCompetencias { get; set; }
-    public string? BeneficiosCompensaciones { get; set; }
-    public string? InformacionContacto { get; set; }
+    public string[]? HabilidadesCompetencias { get; set; } = Array.Empty<string>();
+    public string[]? BeneficiosCompensaciones { get; set; } = Array.Empty<string>();
+    public string? Telefono { get; set; }
+    public string? Email { get; set; }
+    public string? Direccion { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

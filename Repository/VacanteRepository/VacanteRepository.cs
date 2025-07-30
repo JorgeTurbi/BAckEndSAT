@@ -1,5 +1,10 @@
+using AutoMapper;
 using Context;
+using DTOs;
 using Entities;
+using Helper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
@@ -7,55 +12,68 @@ namespace Repository;
 public class VacanteRepository : IVacanteRepository
 {
     private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public VacanteRepository(ApplicationDbContext context)
+    public VacanteRepository(ApplicationDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
+public async Task<GenericResponseDto<List<VacanteDto>>> GetAllWithDetailsAsync()
+{
+    // 1️⃣ Ejecuta la consulta en la DB de forma asíncrona
+    var rawData = await (
+        from v in _context.Vacantes
+        join i in _context.Instituciones on v.InstitucionId equals i.Id
+        join p in _context.Provincias on v.ProvinciaId equals p.Id
+        join c in _context.CategoriasVacante on v.CategoriaId equals c.Id
+        join u in _context.Users on v.UserId equals u.Id
+        where v.IsActive == true
+        orderby v.CreatedAt descending
+        select new { v, i, p, c, u }
+    ).ToListAsync(); // 👈 Aquí ya usamos await
 
-    public async Task<List<Vacante>> GetAllWithDetailsAsync()
+    // 2️⃣ Transformamos a DTO en memoria
+    var queryData = rawData.Select(x => new VacanteDto
     {
-        // ✅ JOIN EXPLÍCITO sin Include
-        return await (
-            from v in _context.Vacantes
-            join i in _context.Instituciones on v.InstitucionId equals i.Id
-            join p in _context.Provincias on v.ProvinciaId equals p.Id
-            join c in _context.CategoriasVacante on v.CategoriaId equals c.Id
-            orderby v.CreatedAt descending
-            select new Vacante
-            {
-                Id = v.Id,
-                InstitucionId = v.InstitucionId,
-                ProvinciaId = v.ProvinciaId,
-                CategoriaId = v.CategoriaId,
-                Titulo = v.Titulo,
-                TipoContrato = v.TipoContrato,
-                SalarioCompensacion = v.SalarioCompensacion,
-                FechaLimiteAplicacion = v.FechaLimiteAplicacion,
-                HorarioTrabajo = v.HorarioTrabajo,
-                DuracionContrato = v.DuracionContrato,
-                DescripcionPuesto = v.DescripcionPuesto,
-                ResponsabilidadesEspecificas = v.ResponsabilidadesEspecificas,
-                RequisitosGenerales = v.RequisitosGenerales,
-                EducacionRequerida = v.EducacionRequerida,
-                ExperienciaRequerida = v.ExperienciaRequerida,
-                HabilidadesCompetencias = v.HabilidadesCompetencias,
-                BeneficiosCompensaciones = v.BeneficiosCompensaciones,
-                InformacionContacto = v.InformacionContacto,
-                IsActive = v.IsActive,
-                CreatedAt = v.CreatedAt,
-                UpdatedAt = v.UpdatedAt,
-                Institucion = new Institucion
-                {
-                    Id = i.Id,
-                    Nombre = i.Nombre,
-                    CodigoNombre = i.CodigoNombre,
-                },
-                Provincia = new Provincia { Id = p.Id, Nombre = p.Nombre },
-                Categoria = new CategoriaVacante { Id = c.Id, Nombre = c.Nombre },
-            }
-        ).ToListAsync();
-    }
+        Id = x.v.Id,
+        InstitucionId = x.v.InstitucionId,
+        ProvinciaId = x.v.ProvinciaId,
+        ProvinciaNombre = x.p.Nombre,
+        CategoriaId = x.v.CategoriaId,
+        Titulo = x.v.Titulo,
+        TipoContrato = x.v.TipoContrato,
+        SalarioCompensacion = x.v.SalarioCompensacion,
+        FechaLimiteAplicacion = x.v.FechaLimiteAplicacion,
+        HorarioTrabajo = x.v.HorarioTrabajo,
+        DuracionContrato = x.v.DuracionContrato,
+        DescripcionPuesto = x.v.DescripcionPuesto,
+        ResponsabilidadesEspecificas = x.v.ResponsabilidadesEspecificas?.Split(","),
+        RequisitosGenerales = x.v.RequisitosGenerales.Split(","), // ahora sí funciona
+        EducacionRequerida = x.v.EducacionRequerida,
+        ExperienciaRequerida = x.v.ExperienciaRequerida,
+        HabilidadesCompetencias = x.v.HabilidadesCompetencias?.Split(","),
+        BeneficiosCompensaciones = x.v.BeneficiosCompensaciones?.Split(","),
+        Telefono = x.v.Telefono,
+        Email=x.v.Email,
+        IsActive = x.v.IsActive,
+        CreatedAt = x.v.CreatedAt,
+        UpdatedAt = x.v.UpdatedAt,
+        InstitucionNombre = x.i.Nombre,
+        CategoriaNombre = x.c.Nombre,
+        UserId = x.u.Id
+    }).ToList();
+
+    return new GenericResponseDto<List<VacanteDto>>
+    {
+        Success = queryData.Count > 0,
+        Message = queryData.Count > 0 
+            ? $"Se encontraron {queryData.Count} vacantes activas" 
+            : "No existen datos para mostrar",
+        Data = queryData.Count > 0 ? queryData : null
+    };
+}
+
 
     public async Task<List<Vacante>> GetActiveWithDetailsAsync()
     {
@@ -88,7 +106,8 @@ public class VacanteRepository : IVacanteRepository
                 ExperienciaRequerida = v.ExperienciaRequerida,
                 HabilidadesCompetencias = v.HabilidadesCompetencias,
                 BeneficiosCompensaciones = v.BeneficiosCompensaciones,
-                InformacionContacto = v.InformacionContacto,
+                Telefono = v.Telefono,
+                Email=v.Email,
                 IsActive = v.IsActive,
                 CreatedAt = v.CreatedAt,
                 UpdatedAt = v.UpdatedAt,
@@ -136,7 +155,8 @@ public class VacanteRepository : IVacanteRepository
                 ExperienciaRequerida = v.ExperienciaRequerida,
                 HabilidadesCompetencias = v.HabilidadesCompetencias,
                 BeneficiosCompensaciones = v.BeneficiosCompensaciones,
-                InformacionContacto = v.InformacionContacto,
+                Telefono = v.Telefono,
+                Email=v.Email,
                 IsActive = v.IsActive,
                 CreatedAt = v.CreatedAt,
                 UpdatedAt = v.UpdatedAt,
@@ -152,11 +172,34 @@ public class VacanteRepository : IVacanteRepository
         ).FirstOrDefaultAsync();
     }
 
-    public async Task<Vacante> CreateAsync(Vacante vacante)
+    public async Task<GenericResponseDto<bool>> CreateAsync(VacanteCreateDto dto)
     {
-        _context.Vacantes.Add(vacante);
-        await _context.SaveChangesAsync();
-        return vacante;
+
+        var validation = ValidatorHelper.Validate(dto);
+        if (!validation.Success)
+        {
+
+            return new GenericResponseDto<bool>
+            {
+                Success = false,
+                Message = validation.Message,
+                Data = false
+            };
+        }
+
+        var mapped = _mapper.Map<Vacante>(dto);
+        mapped.CreatedAt = DateTime.UtcNow;
+
+
+        await _context.Vacantes.AddAsync(mapped);
+        bool result = await _context.SaveChangesAsync() > 0 ? true : false;
+        return new GenericResponseDto<bool>
+        {
+            Success = result,
+            Message = result == true ? "Nueva vacante publicada" : "No se pudo registrar la vacante",
+            Data = result
+        };
+
     }
 
     public async Task<Vacante> UpdateAsync(Vacante vacante)
@@ -205,7 +248,8 @@ public class VacanteRepository : IVacanteRepository
                 ExperienciaRequerida = v.ExperienciaRequerida,
                 HabilidadesCompetencias = v.HabilidadesCompetencias,
                 BeneficiosCompensaciones = v.BeneficiosCompensaciones,
-                InformacionContacto = v.InformacionContacto,
+                Telefono = v.Telefono,
+                Email=v.Email,
                 IsActive = v.IsActive,
                 CreatedAt = v.CreatedAt,
                 UpdatedAt = v.UpdatedAt,
@@ -249,7 +293,8 @@ public class VacanteRepository : IVacanteRepository
                 ExperienciaRequerida = v.ExperienciaRequerida,
                 HabilidadesCompetencias = v.HabilidadesCompetencias,
                 BeneficiosCompensaciones = v.BeneficiosCompensaciones,
-                InformacionContacto = v.InformacionContacto,
+                Telefono = v.Telefono,
+                Email=v.Email,
                 IsActive = v.IsActive,
                 CreatedAt = v.CreatedAt,
                 UpdatedAt = v.UpdatedAt,
@@ -293,7 +338,8 @@ public class VacanteRepository : IVacanteRepository
                 ExperienciaRequerida = v.ExperienciaRequerida,
                 HabilidadesCompetencias = v.HabilidadesCompetencias,
                 BeneficiosCompensaciones = v.BeneficiosCompensaciones,
-                InformacionContacto = v.InformacionContacto,
+                Telefono = v.Telefono,
+                Email=v.Email,
                 IsActive = v.IsActive,
                 CreatedAt = v.CreatedAt,
                 UpdatedAt = v.UpdatedAt,

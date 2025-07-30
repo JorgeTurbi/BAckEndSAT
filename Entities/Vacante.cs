@@ -44,7 +44,6 @@ public class Vacante
 
     public string? ResponsabilidadesEspecificas { get; set; }
 
-    [Required]
     public required string RequisitosGenerales { get; set; }
 
     public string? EducacionRequerida { get; set; }
@@ -53,7 +52,9 @@ public class Vacante
     public string? BeneficiosCompensaciones { get; set; }
 
     [Required, MaxLength(300)]
-    public required string InformacionContacto { get; set; }
+    public required string Telefono { get; set; }
+    public required string Email { get; set; }
+       public string? Direccion { get; set; }
 
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -63,5 +64,5 @@ public class Vacante
     public virtual Institucion? Institucion { get; set; }
     public virtual Provincia? Provincia { get; set; }
     public virtual CategoriaVacante? Categoria { get; set; }
-    public virtual  User? User { get; set; }
+    public virtual User? User { get; set; }
 }

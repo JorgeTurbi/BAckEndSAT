@@ -5,20 +5,61 @@ namespace Context;
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<User> Users { get; set; }
-    public DbSet<Institucion> Instituciones { get; set; }
-    public DbSet<Departamento> Departamentos { get; set; }
-    public DbSet<Session> Sessions { get; set; }
-    public DbSet<Vacante> Vacantes { get; set; }
-    public DbSet<CategoriaVacante> CategoriasVacante { get; set; }
-    public DbSet<Provincia> Provincias { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
+    //Dbsets
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Institucion> Instituciones { get; set; } = null!;
+    public DbSet<Departamento> Departamentos { get; set; } = null!;
+    public DbSet<Session> Sessions { get; set; } = null!;
+    public DbSet<Vacante> Vacantes { get; set; } = null!;
+    public DbSet<CategoriaVacante> CategoriasVacante { get; set; } = null!;
+    public DbSet<Provincia> Provincias { get; set; } = null!;
+    public DbSet<InstitucionMilitar> InstitucionMilitar { get; set; } = null!;
+    public DbSet<Rango> Rangos { get; set; } = null!;
+    public DbSet<Aplicante> Aplicantes { get; set; } = null!;
+    public DbSet<Experience> Experiences { get; set; } = null!;
+    public DbSet<Education> Educations { get; set; } = null!;
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Configuración de UserProfile
+       modelBuilder.Entity<Aplicante>(entity =>
+{
+    entity.ToTable("Aplicantes");
+    entity.HasKey(u => u.Id);
+
+    // Relación 1:N con Experience
+    entity.HasMany(u => u.Experience)
+          .WithOne(e => e.Aplicante)               // propiedad de navegación en Experience
+          .HasForeignKey(e => e.AplicanteId)       // FK
+          .OnDelete(DeleteBehavior.NoAction);      // evita cascada
+
+    // Relación 1:N con Education
+    entity.HasMany(u => u.Education)
+          .WithOne(ed => ed.Aplicante)             // propiedad de navegación en Education
+          .HasForeignKey(ed => ed.AplicanteId)     // FK correcta
+          .OnDelete(DeleteBehavior.NoAction);
+});
+
+        // Configuración de Experience
+        modelBuilder.Entity<Experience>(entity =>
+        {
+            entity.ToTable("Experiences");
+            entity.HasKey(e => e.Id);
+        });
+
+        // Configuración de Education
+        modelBuilder.Entity<Education>(entity =>
+        {
+            entity.ToTable("Educations");
+            entity.HasKey(e => e.Id);
+        });
 
         modelBuilder
             .Entity<User>()
@@ -40,14 +81,20 @@ public class ApplicationDbContext : DbContext
             .HasMany(i => i.Vacantes)
             .WithOne(v => v.Institucion!)
             .HasForeignKey(v => v.InstitucionId)
-             .OnDelete(DeleteBehavior.NoAction);;
+             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Rango>()
+           .HasOne(r => r.InstitucionMilitar)
+           .WithMany(i => i.Rangos)
+           .HasForeignKey(r => r.InstitucionMilitarId)
+           .OnDelete(DeleteBehavior.NoAction); // Si se borra la institución, borra los rangos
 
         modelBuilder
             .Entity<User>()
             .HasOne(u => u.Departamento)
             .WithMany(d => d.Users)
             .HasForeignKey(u => u.DepartamentoId)
-             .OnDelete(DeleteBehavior.NoAction);;
+             .OnDelete(DeleteBehavior.NoAction); ;
 
         // Relación User -> Sessions
         modelBuilder
@@ -55,7 +102,7 @@ public class ApplicationDbContext : DbContext
             .HasOne(s => s.User)
             .WithMany(u => u.Sessions)
             .HasForeignKey(s => s.UserId)
-             .OnDelete(DeleteBehavior.NoAction);;
+             .OnDelete(DeleteBehavior.NoAction); ;
 
         // Índices para mejorar rendimiento
         modelBuilder.Entity<Session>(e =>
@@ -63,7 +110,7 @@ public class ApplicationDbContext : DbContext
             e.Property(s => s.Token).HasColumnType("varchar(max)").IsRequired();
 
             e.HasIndex(s => new { s.UserId, s.IsRevoked });
-         
+
         });
 
         modelBuilder.Entity<Vacante>(e =>
@@ -92,6 +139,77 @@ public class ApplicationDbContext : DbContext
             });
             e.HasIndex(v => v.IsActive);
         });
+
+
+        // ================================
+        // Instituciones militares
+        // ================================
+        modelBuilder.Entity<InstitucionMilitar>().HasData(
+            new InstitucionMilitar { Id = 1, Institucion = "Ejército (ERD)" },
+            new InstitucionMilitar { Id = 2, Institucion = "Armada (ARD)" },
+            new InstitucionMilitar { Id = 3, Institucion = "Fuerza Aérea (FARD)" },
+              new InstitucionMilitar { Id = 4, Institucion = "Ministerio de Defensa (MIDE)" }
+        );
+
+        // ================================
+        // Rangos por institución
+        // ================================
+
+        // Ejercito (ERD)
+        modelBuilder.Entity<Rango>().HasData(
+            new Rango { Id = 1, InstitucionMilitarId = 1, Nombre = "Teniente General" },
+            new Rango { Id = 2, InstitucionMilitarId = 1, Nombre = "Mayor General" },
+            new Rango { Id = 3, InstitucionMilitarId = 1, Nombre = "General de Brigada" },
+            new Rango { Id = 4, InstitucionMilitarId = 1, Nombre = "Coronel" },
+            new Rango { Id = 5, InstitucionMilitarId = 1, Nombre = "Teniente Coronel" },
+            new Rango { Id = 6, InstitucionMilitarId = 1, Nombre = "Mayor" },
+            new Rango { Id = 7, InstitucionMilitarId = 1, Nombre = "Capitán" },
+            new Rango { Id = 8, InstitucionMilitarId = 1, Nombre = "Primer Teniente" },
+            new Rango { Id = 9, InstitucionMilitarId = 1, Nombre = "Segundo Teniente" },
+            new Rango { Id = 10, InstitucionMilitarId = 1, Nombre = "Sargento Mayor" },
+            new Rango { Id = 11, InstitucionMilitarId = 1, Nombre = "Sargento" },
+            new Rango { Id = 12, InstitucionMilitarId = 1, Nombre = "Cabo" },
+            new Rango { Id = 13, InstitucionMilitarId = 1, Nombre = "Raso" },
+            new Rango { Id = 14, InstitucionMilitarId = 1, Nombre = "Asimilado Militar" },
+
+            // Armada (ARD)
+            new Rango { Id = 15, InstitucionMilitarId = 2, Nombre = "Almirante" },
+            new Rango { Id = 16, InstitucionMilitarId = 2, Nombre = "Vicealmirante" },
+            new Rango { Id = 17, InstitucionMilitarId = 2, Nombre = "Contralmirante" },
+            new Rango { Id = 18, InstitucionMilitarId = 2, Nombre = "Capitán de Navio" },
+            new Rango { Id = 19, InstitucionMilitarId = 2, Nombre = "Capitán de Fragata" },
+            new Rango { Id = 20, InstitucionMilitarId = 2, Nombre = "Capitan de Corbeta" },
+            new Rango { Id = 21, InstitucionMilitarId = 2, Nombre = "Teniente de Navio" },
+            new Rango { Id = 22, InstitucionMilitarId = 2, Nombre = "Teniente de Fragata" },
+            new Rango { Id = 23, InstitucionMilitarId = 2, Nombre = "Teniente de Corbeta" },
+            new Rango { Id = 24, InstitucionMilitarId = 2, Nombre = "Sargento Mayor" },
+            new Rango { Id = 25, InstitucionMilitarId = 2, Nombre = "Sargento" },
+            new Rango { Id = 26, InstitucionMilitarId = 2, Nombre = "Cabo" },
+            new Rango { Id = 27, InstitucionMilitarId = 2, Nombre = "Raso" },
+            new Rango { Id = 28, InstitucionMilitarId = 2, Nombre = "Asimilado Militar" },
+            new Rango { Id = 29, InstitucionMilitarId = 2, Nombre = "Auxiliar" },
+
+            // Fuerza Aérea (FARD)
+            new Rango { Id = 30, InstitucionMilitarId = 3, Nombre = "Teniente General Piloto" },
+            new Rango { Id = 31, InstitucionMilitarId = 3, Nombre = "Mayor General Piloto" },
+            new Rango { Id = 32, InstitucionMilitarId = 3, Nombre = "General de Brigada Piloto" },
+            new Rango { Id = 33, InstitucionMilitarId = 3, Nombre = "Coronel" },
+            new Rango { Id = 34, InstitucionMilitarId = 3, Nombre = "Teniente Coronel" },
+            new Rango { Id = 35, InstitucionMilitarId = 3, Nombre = "Mayor" },
+            new Rango { Id = 36, InstitucionMilitarId = 3, Nombre = "Capitan" },
+            new Rango { Id = 37, InstitucionMilitarId = 3, Nombre = "Primer Teniente" },
+            new Rango { Id = 38, InstitucionMilitarId = 3, Nombre = "Segundo Teniente" },
+            new Rango { Id = 39, InstitucionMilitarId = 3, Nombre = "Sargento Mayor" },
+            new Rango { Id = 40, InstitucionMilitarId = 3, Nombre = "Sargento" },
+            new Rango { Id = 41, InstitucionMilitarId = 3, Nombre = "Cabo" },
+            new Rango { Id = 42, InstitucionMilitarId = 3, Nombre = "Raso" },
+            new Rango { Id = 43, InstitucionMilitarId = 3, Nombre = "Asimilado Militar" },
+             // Ministerio de Defensa (MIDE)
+             new Rango { Id = 44, InstitucionMilitarId = 4, Nombre = "Asimilado Militar" }
+
+        );
+
+
 
         // Datos por defecto para Departamentos
         modelBuilder
@@ -236,7 +354,7 @@ public class ApplicationDbContext : DbContext
                     Id = 12,
                     CodigoNombre = "C5i",
                     Nombre = "C5i de las Fuerzas Armadas",
-                    UrlLogo = "/Logos/mide.png",
+                    UrlLogo = "images/logo/c5iLogo.png",
                     Telefono = "809-999-1011",
                     Email = "info@C5iffaa.gob.do",
                     Direccion = "Av. Luperón, Santo Domingo",

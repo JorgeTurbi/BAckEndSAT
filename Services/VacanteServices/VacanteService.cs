@@ -101,52 +101,52 @@ public class VacanteService : IVacanteService
         }
     }
 
-    public async Task<GenericResponseDto<VacanteDto>> CreateAsync(VacanteCreateDto vacanteDto)
-    {
-        try
-        {
-            // Validar que existan las entidades relacionadas
-            var validationResult = await ValidateRelatedEntitiesAsync(
-                vacanteDto.InstitucionId,
-                vacanteDto.ProvinciaId,
-                vacanteDto.CategoriaId
-            );
-            if (!validationResult.Success)
-            {
-                return new GenericResponseDto<VacanteDto>
-                {
-                    Success = false,
-                    Message = validationResult.Message,
-                    Data = null,
-                };
-            }
+    // public async Task<GenericResponseDto<VacanteDto>> CreateAsync(VacanteCreateDto vacanteDto)
+    // {
+    //     try
+    //     {
+    //         // Validar que existan las entidades relacionadas
+    //         var validationResult = await ValidateRelatedEntitiesAsync(
+    //             vacanteDto.InstitucionId,
+    //             vacanteDto.ProvinciaId,
+    //             vacanteDto.CategoriaId
+    //         );
+    //         if (!validationResult.Success)
+    //         {
+    //             return new GenericResponseDto<VacanteDto>
+    //             {
+    //                 Success = false,
+    //                 Message = validationResult.Message,
+    //                 Data = null,
+    //             };
+    //         }
 
-            var vacante = _mapper.Map<Vacante>(vacanteDto);
-            vacante.CreatedAt = DateTime.UtcNow;
+    //         var vacante = _mapper.Map<Vacante>(vacanteDto);
+    //         vacante.CreatedAt = DateTime.UtcNow;
 
-            var createdVacante = await _vacanteRepository.CreateAsync(vacante);
-            var vacanteWithDetails = await _vacanteRepository.GetByIdWithDetailsAsync(
-                createdVacante.Id
-            );
-            var createdVacanteDto = _mapper.Map<VacanteDto>(vacanteWithDetails);
+    //         var createdVacante = await _vacanteRepository.CreateAsync(vacanteDto);
+    //         var vacanteWithDetails = await _vacanteRepository.GetByIdWithDetailsAsync(
+    //             createdVacante.Id
+    //         );
+    //         var createdVacanteDto = _mapper.Map<VacanteDto>(vacanteWithDetails);
 
-            return new GenericResponseDto<VacanteDto>
-            {
-                Success = true,
-                Message = "Vacante creada exitosamente",
-                Data = createdVacanteDto,
-            };
-        }
-        catch (Exception ex)
-        {
-            return new GenericResponseDto<VacanteDto>
-            {
-                Success = false,
-                Message = $"Error al crear vacante: {ex.Message}",
-                Data = null,
-            };
-        }
-    }
+    //         return new GenericResponseDto<VacanteDto>
+    //         {
+    //             Success = true,
+    //             Message = "Vacante creada exitosamente",
+    //             Data = createdVacanteDto,
+    //         };
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return new GenericResponseDto<VacanteDto>
+    //         {
+    //             Success = false,
+    //             Message = $"Error al crear vacante: {ex.Message}",
+    //             Data = null,
+    //         };
+    //     }
+    // }
 
     public async Task<GenericResponseDto<VacanteDto>> UpdateAsync(VacanteUpdateDto vacanteDto)
     {

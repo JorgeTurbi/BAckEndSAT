@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEndSAT.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250726012024_AddVacancies")]
-    partial class AddVacancies
+    [Migration("20250729231737_Initial3")]
+    partial class Initial3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -275,7 +275,46 @@ namespace BackEndSAT.Migrations
                             Email = "info@C5iffaa.gob.do",
                             Nombre = "C5i de las Fuerzas Armadas",
                             Telefono = "809-999-1011",
-                            UrlLogo = "/Logos/mide.png"
+                            UrlLogo = "images/logo/c5iLogo.png"
+                        });
+                });
+
+            modelBuilder.Entity("Entities.InstitucionMilitar", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Institucion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InstitucionMilitar");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Institucion = "Ejército (ERD)"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Institucion = "Armada (ARD)"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Institucion = "Fuerza Aérea (FARD)"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Institucion = "Ministerio de Defensa (MIDE)"
                         });
                 });
 
@@ -459,6 +498,294 @@ namespace BackEndSAT.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Entities.Rango", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("InstitucionMilitarId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InstitucionMilitarId");
+
+                    b.ToTable("Rangos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Teniente General"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Mayor General"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            InstitucionMilitarId = 1,
+                            Nombre = "General de Brigada"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Coronel"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Teniente Coronel"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Mayor"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Capitán"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Primer Teniente"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Segundo Teniente"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Sargento Mayor"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Sargento"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Cabo"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Raso"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            InstitucionMilitarId = 1,
+                            Nombre = "Asimilado Militar"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Almirante"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Vicealmirante"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Contralmirante"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Capitán de Navio"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Capitán de Fragata"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Capitan de Corbeta"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Teniente de Navio"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Teniente de Fragata"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Teniente de Corbeta"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Sargento Mayor"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Sargento"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Cabo"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Raso"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Asimilado Militar"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            InstitucionMilitarId = 2,
+                            Nombre = "Auxiliar"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Teniente General Piloto"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Mayor General Piloto"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            InstitucionMilitarId = 3,
+                            Nombre = "General de Brigada Piloto"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Coronel"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Teniente Coronel"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Mayor"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Capitan"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Primer Teniente"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Segundo Teniente"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Sargento Mayor"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Sargento"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Cabo"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Raso"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            InstitucionMilitarId = 3,
+                            Nombre = "Asimilado Militar"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            InstitucionMilitarId = 4,
+                            Nombre = "Asimilado Militar"
+                        });
+                });
+
             modelBuilder.Entity("Entities.Session", b =>
                 {
                     b.Property<int>("Id")
@@ -581,11 +908,18 @@ namespace BackEndSAT.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Direccion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DuracionContrato")
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
 
                     b.Property<string>("EducacionRequerida")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExperienciaRequerida")
@@ -600,11 +934,6 @@ namespace BackEndSAT.Migrations
                     b.Property<string>("HorarioTrabajo")
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
-
-                    b.Property<string>("InformacionContacto")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("InstitucionId")
                         .HasColumnType("int");
@@ -626,6 +955,11 @@ namespace BackEndSAT.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<int>("TipoContrato")
                         .HasColumnType("int");
 
@@ -637,6 +971,9 @@ namespace BackEndSAT.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoriaId");
@@ -645,9 +982,22 @@ namespace BackEndSAT.Migrations
 
                     b.HasIndex("ProvinciaId");
 
+                    b.HasIndex("UserId");
+
                     b.HasIndex("InstitucionId", "CategoriaId", "ProvinciaId");
 
                     b.ToTable("Vacantes");
+                });
+
+            modelBuilder.Entity("Entities.Rango", b =>
+                {
+                    b.HasOne("Entities.InstitucionMilitar", "InstitucionMilitar")
+                        .WithMany("Rangos")
+                        .HasForeignKey("InstitucionMilitarId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("InstitucionMilitar");
                 });
 
             modelBuilder.Entity("Entities.Session", b =>
@@ -655,7 +1005,7 @@ namespace BackEndSAT.Migrations
                     b.HasOne("Entities.User", "User")
                         .WithMany("Sessions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -666,13 +1016,13 @@ namespace BackEndSAT.Migrations
                     b.HasOne("Entities.Departamento", "Departamento")
                         .WithMany("Users")
                         .HasForeignKey("DepartamentoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Entities.Institucion", "Institucion")
                         .WithMany("Users")
                         .HasForeignKey("InstitutionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Departamento");
@@ -691,7 +1041,7 @@ namespace BackEndSAT.Migrations
                     b.HasOne("Entities.Institucion", "Institucion")
                         .WithMany("Vacantes")
                         .HasForeignKey("InstitucionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Entities.Provincia", "Provincia")
@@ -700,11 +1050,19 @@ namespace BackEndSAT.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Entities.User", "User")
+                        .WithMany("Vacantes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Categoria");
 
                     b.Navigation("Institucion");
 
                     b.Navigation("Provincia");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Entities.CategoriaVacante", b =>
@@ -724,6 +1082,11 @@ namespace BackEndSAT.Migrations
                     b.Navigation("Vacantes");
                 });
 
+            modelBuilder.Entity("Entities.InstitucionMilitar", b =>
+                {
+                    b.Navigation("Rangos");
+                });
+
             modelBuilder.Entity("Entities.Provincia", b =>
                 {
                     b.Navigation("Vacantes");
@@ -732,6 +1095,8 @@ namespace BackEndSAT.Migrations
             modelBuilder.Entity("Entities.User", b =>
                 {
                     b.Navigation("Sessions");
+
+                    b.Navigation("Vacantes");
                 });
 #pragma warning restore 612, 618
         }

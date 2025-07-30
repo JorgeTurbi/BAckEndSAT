@@ -1,6 +1,7 @@
 using DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Repository;
 using Services;
 
 namespace Controllers;
@@ -11,20 +12,22 @@ namespace Controllers;
 public class VacanteController : ControllerBase
 {
     private readonly IVacanteService _vacanteService;
+    private readonly IVacanteRepository _vacante;
 
-    public VacanteController(IVacanteService vacanteService)
+    public VacanteController(IVacanteService vacanteService, IVacanteRepository vacante)
     {
         _vacanteService = vacanteService;
+        _vacante = vacante;
     }
 
     /// <summary>
     /// Obtiene todas las vacantes
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<GenericResponseDto<List<VacanteDto>>>> GetAll()
+    public async Task<ActionResult>GetAll()
     {
-        var result = await _vacanteService.GetAllAsync();
-        return Ok(result);
+        
+        return Ok(await _vacante.GetAllWithDetailsAsync());
     }
 
     /// <summary>
@@ -91,9 +94,7 @@ public class VacanteController : ControllerBase
     /// Crea una nueva vacante
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<GenericResponseDto<VacanteDto>>> Create(
-        [FromBody] VacanteCreateDto vacanteDto
-    )
+    public async Task<ActionResult> Create([FromBody] VacanteCreateDto vacanteDto )
     {
         if (!ModelState.IsValid)
         {
@@ -107,13 +108,7 @@ public class VacanteController : ControllerBase
             );
         }
 
-        var result = await _vacanteService.CreateAsync(vacanteDto);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, result);
+        return Ok(await _vacante.CreateAsync(vacanteDto));
     }
 
     /// <summary>
