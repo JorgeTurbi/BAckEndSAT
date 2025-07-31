@@ -9,6 +9,7 @@ using Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Services;
+using Services.Perfil;
 
 namespace Repository;
 
@@ -17,12 +18,14 @@ public class AuthService : IAuthService
     private readonly ApplicationDbContext _Context;
     private readonly IMapper _Mapper;
     private readonly IConfiguration _config;
+     private readonly IUserProfileService _aplicante;
 
-    public AuthService(ApplicationDbContext context, IMapper mapper, IConfiguration config)
+    public AuthService(ApplicationDbContext context, IMapper mapper, IConfiguration config, IUserProfileService aplicante)
     {
         _Context = context;
         _Mapper = mapper;
         _config = config;
+        _aplicante = aplicante;
     }
 
     // This class is currently empty, but it can be used to implement authentication-related methods in the future.
@@ -37,9 +40,10 @@ public class AuthService : IAuthService
             .Users.Include(u => u.Institucion)
             .Include(u => u.Departamento)
             .FirstOrDefaultAsync(u => u.Usuario == dto.Usuario);
-
+        
         if (user == null)
         {
+         
             return new GenericResponseDto<LoginResponseDto>
             {
                 Success = false,
@@ -76,13 +80,16 @@ public class AuthService : IAuthService
 
         // Mapear usuario a UserProfileDto
         var userProfile = _Mapper.Map<UserProfileDto>(user);
+        
         userProfile.UserType = user.UserType == "P" ? "Personal" : "Vacante";
-
+      GenericResponseDto<ApplicanteDto> AplicantePerfil = await _aplicante.GetByIdAsync(user.Id);
+                  
         var loginResponse = new LoginResponseDto
         {
             Token = tokenData.Token,
             ExpiresAt = tokenData.ExpiresAt,
             User = userProfile,
+            Perfil=AplicantePerfil.Data
         };
 
         return new GenericResponseDto<LoginResponseDto>
@@ -90,6 +97,7 @@ public class AuthService : IAuthService
             Success = true,
             Message = "Login exitoso",
             Data = loginResponse,
+            
         };
     }
 

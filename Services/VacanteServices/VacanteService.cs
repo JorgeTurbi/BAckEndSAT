@@ -41,6 +41,11 @@ public class VacanteService : IVacanteService
         }
     }
 
+
+
+
+
+
     public async Task<GenericResponseDto<List<VacanteDto>>> GetActiveAsync()
     {
         try
@@ -415,5 +420,11 @@ public class VacanteService : IVacanteService
             Message = ok ? "Vacante desactivada" : "No se pudo desactivar la vacante",
             Data = ok,
         };
+    }
+
+    public async Task<GenericResponseDto<VacanteDto>> GetVacanteById(int VacanteId)
+    {
+        GenericResponseDto<VacanteDto> Repository = await _vacanteRepository.GetByIdWithDetailsAsync(VacanteId);
+        return Repository;
     }
 }

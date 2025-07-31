@@ -12,7 +12,8 @@ public class AplicacionVacante
     public int AplicanteId { get; set; }
    public int VacanteId { get; set; }
 
-    public DateTime FechaAplicacion { get; set; } = DateTime.UtcNow;    // FK Estado
+    public DateTime FechaAplicacion { get; set; } = DateTime.UtcNow;   
+     // FK Estado
     public int EstadoId { get; set; }
 
 
@@ -20,6 +21,7 @@ public class AplicacionVacante
     public double MatchPorcentaje { get; set; }
 
     public string? Observaciones { get; set; }
+     public DateTime? Fechaentrevista { get; set; }
 
     public virtual Aplicante? Aplicante { get; set; }
     public virtual Vacante? Vacante { get; set; }

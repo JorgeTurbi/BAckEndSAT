@@ -23,37 +23,37 @@ public class ApplicationDbContext : DbContext
     public DbSet<Experience> Experiences { get; set; } = null!;
     public DbSet<Education> Educations { get; set; } = null!;
     public DbSet<Estado> Estados { get; set; } = null!;
-     public DbSet<AplicacionVacante> AplicacionVacantes { get; set; } = null!;
+    public DbSet<AplicacionVacante> AplicacionVacantes { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-// Relación Aplicante 1:N AplicacionVacante
+        // Relación Aplicante 1:N AplicacionVacante
 
-modelBuilder.Entity<AplicacionVacante>()
-    .HasOne(av => av.Aplicante)
-    .WithMany(a => a.Aplicaciones)
-    .HasForeignKey(av => av.AplicanteId)
-    .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<AplicacionVacante>()
+            .HasOne(av => av.Aplicante)
+            .WithMany(a => a.Aplicaciones)
+            .HasForeignKey(av => av.AplicanteId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-// Relación Vacante 1:N AplicacionVacante
-modelBuilder.Entity<AplicacionVacante>()
-    .HasOne(av => av.Vacante)
-    .WithMany(v => v.Aplicaciones)
-    .HasForeignKey(av => av.VacanteId)
-    .OnDelete(DeleteBehavior.NoAction);
+        // Relación Vacante 1:N AplicacionVacante
+        modelBuilder.Entity<AplicacionVacante>()
+            .HasOne(av => av.Vacante)
+            .WithMany(v => v.Aplicaciones)
+            .HasForeignKey(av => av.VacanteId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-// Relación Estado 1:N AplicacionVacante
-modelBuilder.Entity<AplicacionVacante>()
-    .HasOne(av => av.Estado)
-    .WithMany()
-    .HasForeignKey(av => av.EstadoId)
-    .OnDelete(DeleteBehavior.NoAction);
+        // Relación Estado 1:N AplicacionVacante
+        modelBuilder.Entity<AplicacionVacante>()
+            .HasOne(av => av.Estado)
+            .WithMany()
+            .HasForeignKey(av => av.EstadoId)
+            .OnDelete(DeleteBehavior.NoAction);
 
 
-    
+
 
         // Configuración de UserProfile
         modelBuilder.Entity<Aplicante>(entity =>
@@ -126,7 +126,9 @@ modelBuilder.Entity<AplicacionVacante>()
              new Estado { Id = 1, Nombre = "Pendiente", Descripcion = "Aplicación recibida, en espera de revisión" },
              new Estado { Id = 2, Nombre = "En revisión", Descripcion = "Aplicación está siendo evaluada por el reclutador" },
              new Estado { Id = 3, Nombre = "Aprobado", Descripcion = "Aplicante seleccionado para la vacante" },
-             new Estado { Id = 4, Nombre = "Rechazado", Descripcion = "Aplicante no seleccionado para esta vacante" }
+             new Estado { Id = 4, Nombre = "Rechazado", Descripcion = "Aplicante no seleccionado para esta vacante" },
+             new Estado { Id = 5, Nombre = "Entrevista programada", Descripcion = "Se ha coordinado una entrevista con el aplicante"}
+
          );
         // Relación User -> Sessions
         modelBuilder

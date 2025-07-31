@@ -1,4 +1,5 @@
 using AutoMapper;
+using BackEndSAT.DTOs;
 using Context;
 using DTOs;
 using Entities;
@@ -61,17 +62,52 @@ public class AplicacionVacanteRepository : IAplicacionVacanteService
 
         await _context.AplicacionVacantes.AddAsync(aplicacion);
         bool result = await _context.SaveChangesAsync() > 0 ? true : false;
-     
 
-            return new GenericResponseDto<bool>
-            {
-                Success = result,
-                Message = result==false? "ha habido un problema con la aplicacion a de la vacante":"Aplicación recibida, en espera de revisión",
-                Data = result
-            };
-        
 
-    
+        return new GenericResponseDto<bool>
+        {
+            Success = result,
+            Message = result == false ? "ha habido un problema con la aplicacion a de la vacante" : "Aplicación recibida, en espera de revisión",
+            Data = result
+        };
+
+
+
+    }
+
+    public async Task<GenericResponseDto<List<AplicacionesDTO>>> GetAllAsyncbyUserId(int UserId)
+    {
+        int AplicanteId = await getAplicante(UserId);
+        if (AplicanteId > 0)
+        {
+            List<AplicacionesDTO> query = await (from av in _context.AplicacionVacantes
+                                                 join v in _context.Vacantes on av.VacanteId equals v.Id
+                                                 join e in _context.Estados on av.EstadoId equals e.Id
+                                                 join c in _context.CategoriasVacante on v.CategoriaId equals c.Id
+                                                 where av.AplicanteId == AplicanteId!
+                                                 select new AplicacionesDTO
+                                                 {
+                                                     Id = av.Id,
+                                                     VacanteId=v.Id,
+                                                     FechaAplicacion = av.FechaAplicacion,
+                                                     MatchPorcentaje = av.MatchPorcentaje,
+                                                     TituloVacante = v.Titulo,
+                                                     Estado = e.Nombre,
+                                                     EstadoId=av.EstadoId,
+                                                     Departamento = c.Nombre,
+                                                     Ubicacion = v.Provincia != null ? v.Provincia.Nombre : "",
+                                                     Observaciones = av.Observaciones,
+                                                     Fechaentrevista = null // si no tienes el campo en la entidad
+                                                 }).ToListAsync();
+
+         
+                return new GenericResponseDto<List<AplicacionesDTO>> { Success = query.Count>0?true:false, Message = query.Count>0? $"Has Aplicado a {query.Count} Vacantes":"No se encontraron vacantes aplicadas", Data = query.Count>0?query:null! };
+            
+
+
+
+        }
+        return new GenericResponseDto<List<AplicacionesDTO>> { Success = false, Message = "No se encontraron los registros", Data = null! };
     }
 
 
@@ -131,16 +167,12 @@ public class AplicacionVacanteRepository : IAplicacionVacanteService
     }
 
 
-    // public async Task<List<AplicacionVacanteDto>> GetAllAsync()
-    // {
-    //     throw new NotImplementedException();
-    // }
+    private async Task<int> getAplicante(int UserId)
+    {
+        int results = await _context.Aplicantes.Where(a => a.UserId == UserId).Select(a => a.Id).FirstOrDefaultAsync();
+        return results > 0 ? results : 0;
 
-    // public async Task<AplicacionVacanteDto?> GetByIdAsync(int aplicacionId)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
+    }
 
 
 }

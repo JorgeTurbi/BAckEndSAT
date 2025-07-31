@@ -27,6 +27,15 @@ namespace BackEndSAT.Controllers
                 return BadRequest(new { Success = false, Message = "Datos inválidos" });
             return Ok(await _aplicarvacante.CrearAsync(aplica));
         }
-    
+
+        [HttpGet("GetAplicacionesbyUserId")]
+        public async Task<IActionResult> GetAplicacionesbyUserId([FromQuery] int UserId)
+        {
+
+            return Ok(await _aplicarvacante.GetAllAsyncbyUserId(UserId));
+        }
+
+
+
     }
 }

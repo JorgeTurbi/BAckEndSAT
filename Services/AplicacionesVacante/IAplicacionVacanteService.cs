@@ -1,3 +1,4 @@
+using BackEndSAT.DTOs;
 using DTOs;
 
 namespace Services.AplicacionesVacante;
@@ -5,7 +6,7 @@ namespace Services.AplicacionesVacante;
 public interface IAplicacionVacanteService
 {
     Task<GenericResponseDto<bool>> CrearAsync(AplicacionVacanteDto aplicar);
-    // Task<List<AplicacionVacanteDto>> GetAllAsync();
+    Task<GenericResponseDto<List<AplicacionesDTO>>> GetAllAsyncbyUserId(int UserId);
     // Task<AplicacionVacanteDto?> GetByIdAsync(int aplicacionId);
 
 }

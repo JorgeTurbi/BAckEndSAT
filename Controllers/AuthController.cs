@@ -14,11 +14,13 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly ISessionValidationService _sessionService;
+   
 
     public AuthController(IAuthService authService, ISessionValidationService sessionService)
     {
         _authService = authService;
         _sessionService = sessionService;
+      
     }
 
     /// <summary>

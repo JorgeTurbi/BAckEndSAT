@@ -35,6 +35,11 @@ public class ApplicanteDto
     // Arrays dinámicos
     public List<ExperienceDto> Experience { get; set; } = new();
     public List<EducationDto> Education { get; set; } = new();
+
+    public static implicit operator ApplicanteDto?(GenericResponseDto<ApplicanteDto>? v)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class ExperienceDto

@@ -15,4 +15,5 @@ public interface IVacanteService
     Task<GenericResponseDto<List<VacanteDto>>> GetByProvinciaAsync(int provinciaId);
     Task<GenericResponseDto<bool>> ActivateAsync(int id);
     Task<GenericResponseDto<bool>> DeactivateAsync(int id);
+    Task<GenericResponseDto<VacanteDto>> GetVacanteById(int VacanteId);
 }

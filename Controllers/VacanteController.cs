@@ -24,9 +24,9 @@ public class VacanteController : ControllerBase
     /// Obtiene todas las vacantes
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult>GetAll()
+    public async Task<ActionResult> GetAll()
     {
-        
+
         return Ok(await _vacante.GetAllWithDetailsAsync());
     }
 
@@ -43,15 +43,15 @@ public class VacanteController : ControllerBase
     /// <summary>
     /// Obtiene una vacante por ID
     /// </summary>
-    [HttpGet("{id}")]
-    public async Task<ActionResult<GenericResponseDto<VacanteDto>>> GetById(int id)
+    [HttpGet("GetVacanteById")]
+    public async Task<IActionResult> GetVacanteById([FromQuery] int id)
     {
-        var result = await _vacanteService.GetByIdAsync(id);
-        if (!result.Success)
+
+        if (id < 0 )
         {
-            return NotFound(result);
+            return NotFound(id);
         }
-        return Ok(result);
+        return Ok( await _vacanteService.GetVacanteById(id));
     }
 
     /// <summary>

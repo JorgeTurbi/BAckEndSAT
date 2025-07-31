@@ -4,6 +4,7 @@ using Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEndSAT.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250730232602_CampoFechaEntrevista")]
+    partial class CampoFechaEntrevista
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -311,7 +314,7 @@ namespace BackEndSAT.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 7, 30, 23, 30, 24, 790, DateTimeKind.Utc).AddTicks(1773),
+                            CreatedAt = new DateTime(2025, 7, 30, 23, 26, 1, 552, DateTimeKind.Utc).AddTicks(4106),
                             Descripcion = "Aplicación recibida, en espera de revisión",
                             IsActive = true,
                             Nombre = "Pendiente"
@@ -319,7 +322,7 @@ namespace BackEndSAT.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 7, 30, 23, 30, 24, 790, DateTimeKind.Utc).AddTicks(1781),
+                            CreatedAt = new DateTime(2025, 7, 30, 23, 26, 1, 552, DateTimeKind.Utc).AddTicks(4110),
                             Descripcion = "Aplicación está siendo evaluada por el reclutador",
                             IsActive = true,
                             Nombre = "En revisión"
@@ -327,7 +330,7 @@ namespace BackEndSAT.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 7, 30, 23, 30, 24, 790, DateTimeKind.Utc).AddTicks(1783),
+                            CreatedAt = new DateTime(2025, 7, 30, 23, 26, 1, 552, DateTimeKind.Utc).AddTicks(4112),
                             Descripcion = "Aplicante seleccionado para la vacante",
                             IsActive = true,
                             Nombre = "Aprobado"
@@ -335,18 +338,10 @@ namespace BackEndSAT.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 7, 30, 23, 30, 24, 790, DateTimeKind.Utc).AddTicks(1784),
+                            CreatedAt = new DateTime(2025, 7, 30, 23, 26, 1, 552, DateTimeKind.Utc).AddTicks(4113),
                             Descripcion = "Aplicante no seleccionado para esta vacante",
                             IsActive = true,
                             Nombre = "Rechazado"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2025, 7, 30, 23, 30, 24, 790, DateTimeKind.Utc).AddTicks(1785),
-                            Descripcion = "Se ha coordinado una entrevista con el aplicante",
-                            IsActive = true,
-                            Nombre = "Entrevista programada"
                         });
                 });
 

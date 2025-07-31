@@ -7,8 +7,7 @@ public interface IVacanteRepository
 {
     Task<GenericResponseDto<List<VacanteDto>>> GetAllWithDetailsAsync();
     Task<List<Vacante>> GetActiveWithDetailsAsync();
-    Task<Vacante?> GetByIdAsync(int id);
-    Task<Vacante?> GetByIdWithDetailsAsync(int id);
+    Task<Vacante?> GetByIdAsync(int id);Task<GenericResponseDto<VacanteDto>> GetByIdWithDetailsAsync(int id);
     Task<GenericResponseDto<bool>> CreateAsync(VacanteCreateDto vacante);
     Task<Vacante> UpdateAsync(Vacante vacante);
     Task<bool> DeleteAsync(int id);

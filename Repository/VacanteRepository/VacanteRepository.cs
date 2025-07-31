@@ -1,10 +1,9 @@
+using System.Linq;
 using AutoMapper;
 using Context;
 using DTOs;
 using Entities;
 using Helper;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
@@ -128,49 +127,75 @@ public async Task<GenericResponseDto<List<VacanteDto>>> GetAllWithDetailsAsync()
         return await _context.Vacantes.FirstOrDefaultAsync(v => v.Id == id);
     }
 
-    public async Task<Vacante?> GetByIdWithDetailsAsync(int id)
+public Task<GenericResponseDto<VacanteDto>> GetByIdWithDetailsAsync(int id)
+{
+    var queryData = (
+        from v in _context.Vacantes
+        join i in _context.Instituciones on v.InstitucionId equals i.Id
+        join p in _context.Provincias on v.ProvinciaId equals p.Id
+        join c in _context.CategoriasVacante on v.CategoriaId equals c.Id
+        join u in _context.Users on v.UserId equals u.Id
+        where v.IsActive && v.Id == id
+        orderby v.CreatedAt descending
+        select new
+        {
+            v,
+            InstitucionNombre = i.Nombre,
+            ProvinciaNombre = p.Nombre,
+            CategoriaNombre = c.Nombre,
+            UserId = u.Id
+        }
+    ).AsEnumerable() // ejecuta en memoria
+    .Select(x => new VacanteDto
     {
-        return await (
-            from v in _context.Vacantes
-            join i in _context.Instituciones on v.InstitucionId equals i.Id
-            join p in _context.Provincias on v.ProvinciaId equals p.Id
-            join c in _context.CategoriasVacante on v.CategoriaId equals c.Id
-            where v.Id == id
-            select new Vacante
-            {
-                Id = v.Id,
-                InstitucionId = v.InstitucionId,
-                ProvinciaId = v.ProvinciaId,
-                CategoriaId = v.CategoriaId,
-                Titulo = v.Titulo,
-                TipoContrato = v.TipoContrato,
-                SalarioCompensacion = v.SalarioCompensacion,
-                FechaLimiteAplicacion = v.FechaLimiteAplicacion,
-                HorarioTrabajo = v.HorarioTrabajo,
-                DuracionContrato = v.DuracionContrato,
-                DescripcionPuesto = v.DescripcionPuesto,
-                ResponsabilidadesEspecificas = v.ResponsabilidadesEspecificas,
-                RequisitosGenerales = v.RequisitosGenerales,
-                EducacionRequerida = v.EducacionRequerida,
-                ExperienciaRequerida = v.ExperienciaRequerida,
-                HabilidadesCompetencias = v.HabilidadesCompetencias,
-                BeneficiosCompensaciones = v.BeneficiosCompensaciones,
-                Telefono = v.Telefono,
-                Email=v.Email,
-                IsActive = v.IsActive,
-                CreatedAt = v.CreatedAt,
-                UpdatedAt = v.UpdatedAt,
-                Institucion = new Institucion
-                {
-                    Id = i.Id,
-                    Nombre = i.Nombre,
-                    CodigoNombre = i.CodigoNombre,
-                },
-                Provincia = new Provincia { Id = p.Id, Nombre = p.Nombre },
-                Categoria = new CategoriaVacante { Id = c.Id, Nombre = c.Nombre },
-            }
-        ).FirstOrDefaultAsync();
-    }
+        Id = x.v.Id,
+        InstitucionId = x.v.InstitucionId,
+        ProvinciaId = x.v.ProvinciaId,
+        ProvinciaNombre = x.ProvinciaNombre,
+        CategoriaId = x.v.CategoriaId,
+        Titulo = x.v.Titulo,
+        TipoContrato = x.v.TipoContrato,
+        SalarioCompensacion = x.v.SalarioCompensacion,
+        FechaLimiteAplicacion = x.v.FechaLimiteAplicacion,
+        HorarioTrabajo = x.v.HorarioTrabajo,
+        DuracionContrato = x.v.DuracionContrato,
+        DescripcionPuesto = x.v.DescripcionPuesto,
+        ResponsabilidadesEspecificas = string.IsNullOrEmpty(x.v.ResponsabilidadesEspecificas)
+            ? Array.Empty<string>()
+            : x.v.ResponsabilidadesEspecificas.Split(','),
+        RequisitosGenerales = string.IsNullOrEmpty(x.v.RequisitosGenerales)
+            ? Array.Empty<string>()
+            : x.v.RequisitosGenerales.Split(','),
+        EducacionRequerida = x.v.EducacionRequerida,
+        ExperienciaRequerida = x.v.ExperienciaRequerida,
+        HabilidadesCompetencias = string.IsNullOrEmpty(x.v.HabilidadesCompetencias)
+            ? Array.Empty<string>()
+            : x.v.HabilidadesCompetencias.Split(','),
+        BeneficiosCompensaciones = string.IsNullOrEmpty(x.v.BeneficiosCompensaciones)
+            ? Array.Empty<string>()
+            : x.v.BeneficiosCompensaciones.Split(','),
+        Telefono = x.v.Telefono,
+        Email = x.v.Email,
+        IsActive = x.v.IsActive,
+        CreatedAt = x.v.CreatedAt,
+        UpdatedAt = x.v.UpdatedAt,
+        InstitucionNombre = x.InstitucionNombre,
+        CategoriaNombre = x.CategoriaNombre,
+        UserId = x.UserId
+    })
+    .FirstOrDefault();
+
+    var response = new GenericResponseDto<VacanteDto>
+    {
+        Success = queryData != null,
+        Message = queryData != null ? "Vacante encontrada" : "No se encontró la vacante",
+        Data = queryData!
+    };
+
+    // 🔹 Envuelve el resultado en un Task para cumplir con la firma
+    return Task.FromResult(response);
+}
+
 
     public async Task<GenericResponseDto<bool>> CreateAsync(VacanteCreateDto dto)
     {
