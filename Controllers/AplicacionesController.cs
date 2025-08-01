@@ -34,6 +34,25 @@ namespace BackEndSAT.Controllers
 
             return Ok(await _aplicarvacante.GetAllAsyncbyUserId(UserId));
         }
+          [HttpGet("GetAplicaciones")]
+        public async Task<IActionResult> GetAplicaciones()
+        {
+
+            return Ok(await _aplicarvacante.GetAllAsync());
+        }
+
+        [HttpGet("ConsultadeAplicantes")]
+        public async Task<IActionResult> ConsultaAplicantes([FromQuery] int VacanteId)
+        {
+
+            return Ok(await _aplicarvacante.ConsultaAplicantes(VacanteId));
+        }
+    [HttpGet("GetVacanteCategoriasActivas")]
+        public async Task<IActionResult> GetVacanteCategoriasActivas()
+        {
+
+            return Ok(await _aplicarvacante.GetVacanteCategoriasActivas());
+        }
 
 
 

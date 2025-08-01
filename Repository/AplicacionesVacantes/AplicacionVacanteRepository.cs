@@ -75,6 +75,83 @@ public class AplicacionVacanteRepository : IAplicacionVacanteService
 
     }
 
+    public async Task<GenericResponseDto<List<AplicacionesDTO>>> GetAllAsync()
+    {
+        List<AplicacionesDTO> query = await (from av in _context.AplicacionVacantes
+                                             join v in _context.Vacantes on av.VacanteId equals v.Id
+                                             join e in _context.Estados on av.EstadoId equals e.Id
+                                             join c in _context.CategoriasVacante on v.CategoriaId equals c.Id
+
+                                             select new AplicacionesDTO
+                                             {
+                                                 Id = av.Id,
+                                                 VacanteId = v.Id,
+                                                 FechaAplicacion = av.FechaAplicacion,
+                                                 MatchPorcentaje = av.MatchPorcentaje,
+                                                 TituloVacante = v.Titulo,
+                                                 Estado = e.Nombre,
+                                                 EstadoId = av.EstadoId,
+                                                 Departamento = c.Nombre,
+                                                 Ubicacion = v.Provincia != null ? v.Provincia.Nombre : "",
+                                                 Observaciones = av.Observaciones,
+                                                 Fechaentrevista = null // si no tienes el campo en la entidad
+                                             }).ToListAsync();
+
+
+        return new GenericResponseDto<List<AplicacionesDTO>> { Success = query.Count > 0 ? true : false, Message = query.Count > 0 ? $"Has Aplicado a {query.Count} Vacantes" : "No se encontraron vacantes aplicadas", Data = query.Count > 0 ? query : null! };
+
+    }
+
+    public async Task<GenericResponseDto<List<AplicanteReclutadorDTO>>> ConsultaAplicantes(int VacanteId)
+    {
+        var query = await (
+            from a in _context.Aplicantes
+            join av in _context.AplicacionVacantes on a.Id equals av.AplicanteId
+            join e in _context.Estados on av.EstadoId equals e.Id
+            join r in _context.Rangos on a.Rank equals r.Id.ToString()
+            where av.VacanteId == VacanteId
+            select new AplicanteReclutadorDTO
+            {
+                AplicanteId = a.Id,
+                UserId = a.UserId,
+                ProfileImage = a.ProfileImage,
+                Name = a.Name,
+                Rango = r.Nombre,
+                Specialization = a.Specialization,
+                EstadoId = e.Id,
+                Estado = e.Nombre, // Ajusta si el campo se llama diferente
+                FechaAplicacion = av.FechaAplicacion,
+                MatchPorcentaje = av.MatchPorcentaje
+            }
+        ).ToListAsync();
+
+        return new GenericResponseDto<List<AplicanteReclutadorDTO>>
+        {
+            Success = true,
+            Message = "Consulta realizada correctamente",
+            Data = query
+        };
+    }
+
+
+    public async Task<GenericResponseDto<List<FiltroVacanteDto>>> GetVacanteCategoriasActivas()
+    {
+        var query = await (from v in _context.Vacantes
+                           join
+                          c in _context.CategoriasVacante on v.CategoriaId equals c.Id
+                           select new FiltroVacanteDto
+                           {
+                               VacanteId = v.Id,
+                               NombreVacante = v.Titulo,
+                               CategoriaId = v.CategoriaId,
+                               NombreCategoria = c.Nombre
+
+
+                           }).ToListAsync();
+        return new GenericResponseDto<List<FiltroVacanteDto>> { Success = query.Count > 0 ? true : false, Message = query.Count > 0 ? $"Existen {query.Count} Vacantes" : "No se encontraron vacantes aplicadas", Data = query.Count > 0 ? query : null! };
+
+
+    }
     public async Task<GenericResponseDto<List<AplicacionesDTO>>> GetAllAsyncbyUserId(int UserId)
     {
         int AplicanteId = await getAplicante(UserId);
@@ -88,21 +165,21 @@ public class AplicacionVacanteRepository : IAplicacionVacanteService
                                                  select new AplicacionesDTO
                                                  {
                                                      Id = av.Id,
-                                                     VacanteId=v.Id,
+                                                     VacanteId = v.Id,
                                                      FechaAplicacion = av.FechaAplicacion,
                                                      MatchPorcentaje = av.MatchPorcentaje,
                                                      TituloVacante = v.Titulo,
                                                      Estado = e.Nombre,
-                                                     EstadoId=av.EstadoId,
+                                                     EstadoId = av.EstadoId,
                                                      Departamento = c.Nombre,
                                                      Ubicacion = v.Provincia != null ? v.Provincia.Nombre : "",
                                                      Observaciones = av.Observaciones,
                                                      Fechaentrevista = null // si no tienes el campo en la entidad
                                                  }).ToListAsync();
 
-         
-                return new GenericResponseDto<List<AplicacionesDTO>> { Success = query.Count>0?true:false, Message = query.Count>0? $"Has Aplicado a {query.Count} Vacantes":"No se encontraron vacantes aplicadas", Data = query.Count>0?query:null! };
-            
+
+            return new GenericResponseDto<List<AplicacionesDTO>> { Success = query.Count > 0 ? true : false, Message = query.Count > 0 ? $"Has Aplicado a {query.Count} Vacantes" : "No se encontraron vacantes aplicadas", Data = query.Count > 0 ? query : null! };
+
 
 
 
