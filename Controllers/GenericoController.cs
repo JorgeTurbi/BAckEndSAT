@@ -8,8 +8,10 @@ using Services.Perfil;
 
 namespace BackEndSAT.Controllers;
 
+
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class GenericoController : ControllerBase
 {
     private readonly IInterfacePerfil _Perfil;
