@@ -1,5 +1,6 @@
 using System.Text;
 using BackEndSAT.Middlewares;
+using BackEndSAT.Services.IEstadistica;
 using Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -8,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
 using Repository.AplicacionesVacantes;
+using Repository.Estadistica;
 using Repository.InstitucionesRepository;
 using Repository.InstitucionesRepository.PerfilesRepository;
 using Repository.PerlesRepository;
@@ -93,6 +95,8 @@ builder.Services.AddScoped<IInstitucion, InstitucionRepository>();
 builder.Services.AddScoped<IInterfacePerfil, Generico>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddScoped<IAplicacionVacanteService, AplicacionVacanteRepository>();
+builder.Services.AddScoped<IEstadisticaService, EstadisticaRepository>();
+
 
 builder.Services.AddControllers();
 

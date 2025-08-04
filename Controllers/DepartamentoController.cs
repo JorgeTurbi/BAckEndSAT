@@ -10,7 +10,7 @@ namespace BackEndSAT.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+
 public class DepartamentoController : ControllerBase
 {
     private readonly IInstitucion _institucionService;
